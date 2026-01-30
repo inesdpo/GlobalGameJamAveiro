@@ -144,7 +144,7 @@ Material:
     - _BlendMode: 0
     - _BlendModePreserveSpecular: 0
     - _CastShadows: 1
-    - _Cull: 2
+    - _Cull: 0
     - _CullMode: 2
     - _CullModeForward: 2
     - _DepthOffsetEnable: 0

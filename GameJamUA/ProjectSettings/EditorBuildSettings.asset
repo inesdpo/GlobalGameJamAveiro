@@ -8,6 +8,15 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/SampleScene.unity
     guid: 99c9720ab356a0642a771bea13969a05
+  - enabled: 1
+    path: Assets/ines/MainScene.unity
+    guid: 908ec31f911f53f4e943771d64be6995
+  - enabled: 1
+    path: Assets/ines/WinScene.unity
+    guid: c720b3a2a2345bf4da7b1ce0f5cff549
+  - enabled: 1
+    path: Assets/ines/LostScene.unity
+    guid: 6dd57a2bf1e0feb468349c16846df67e
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}
   m_UseUCBPForAssetBundles: 0

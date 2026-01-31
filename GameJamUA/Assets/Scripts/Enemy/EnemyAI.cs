@@ -31,6 +31,10 @@ public class EnemyAI : MonoBehaviour
     [Header("Vision Memory")]
     public float memoryTime = 3f; // seconds enemy keeps chasing after losing sight
 
+    [Header("Vision Settings")]
+    [Range(0, 180)] public float fieldOfView = 70f;
+
+    // mask-related flag (other scripts can toggle via SetIgnorePlayer)
     [Header("Mask Interaction")]
     public bool ignorePlayer = false;
 
@@ -43,8 +47,6 @@ public class EnemyAI : MonoBehaviour
     private Transform currentDest;
     private Coroutine chaseRoutine;
     private Coroutine idleRoutine;
-
-    //[SerializeField] private Animator animator;
 
     void Start()
     {
@@ -66,8 +68,6 @@ public class EnemyAI : MonoBehaviour
         {
             // Reset coroutines/states but avoid killing all coroutines (e.g. attack coroutine)
             ResetAllCoroutines();
-
-            //animator.SetBool("Ischasing", true);
 
             chasing = true;
             walking = false;
@@ -93,7 +93,6 @@ public class EnemyAI : MonoBehaviour
         // --- PATROLLING BEHAVIOR ---
         if (walking && canMove)
         {
-
             ai.speed = walkSpeed;
             if (currentDest != null)
                 ai.destination = currentDest.position;
@@ -118,11 +117,24 @@ public class EnemyAI : MonoBehaviour
     {
         if (player == null || ignorePlayer) return false;
 
-        Vector3 direction = (player.position - transform.position).normalized;
-        if (Physics.Raycast(transform.position + raycastOffset, direction, out RaycastHit hit, sightDistance))
+        Vector3 directionToPlayer = (player.position - transform.position).normalized;
+
+        // --- FOV check ---
+        float angleToPlayer = Vector3.Angle(transform.forward, directionToPlayer);
+        if (angleToPlayer > fieldOfView * 0.5f)
+            return false; // player is outside vision cone
+
+        // --- Distance check ---
+        float distanceToPlayer = Vector3.Distance(transform.position, player.position);
+        if (distanceToPlayer > sightDistance)
+            return false; // too far
+
+        // --- Raycast check (line of sight) ---
+        if (Physics.Raycast(transform.position + raycastOffset, directionToPlayer, out RaycastHit hit, sightDistance))
         {
             return hit.collider.CompareTag("Player");
         }
+
         return false;
     }
 
@@ -176,7 +188,6 @@ public class EnemyAI : MonoBehaviour
             elapsed += Time.deltaTime;
             yield return null;
         }
-
 
         chasing = false;
         walking = true;
@@ -269,21 +280,16 @@ public class EnemyAI : MonoBehaviour
         Debug.Log("[EnemyAI] stopChase called, now Walking");
     }
 
-    // --- Pick Random Destination ---
-    void PickNewDestination()
+    // --- Called by other scripts to toggle ignore flag (e.g., mask behavior) ---
+    public void SetIgnorePlayer(bool state)
     {
-        if (destinations == null || destinations.Count == 0) return;
-        currentDest = destinations[Random.Range(0, destinations.Count)];
-        if (ai != null && currentDest != null)
-            ai.destination = currentDest.position;
+        ignorePlayer = state;
     }
 
-    public void OnPlayerMasked(float pauseTime)
+    // --- Public API: Handle mask pause (keeps behavior identical to your single-script) ---
+    public void HandleMaskPause(float pauseTime)
     {
-        if (chasing)
-        {
-            StartCoroutine(PauseAndReturnToPatrol(pauseTime));
-        }
+        StartCoroutine(PauseAndReturnToPatrol(pauseTime));
     }
 
     private IEnumerator PauseAndReturnToPatrol(float pauseTime)
@@ -299,21 +305,40 @@ public class EnemyAI : MonoBehaviour
         // Ignore player while masked
         ignorePlayer = true;
 
-        // Wait
+        // Wait for mask effect duration
         yield return new WaitForSeconds(pauseTime);
 
-        // Resume patrol
+        // Resume patrol movement
         ai.isStopped = false;
         canMove = true;
         walking = true;
         PickNewDestination();
 
-        // Stop ignoring player
+        // Re-enable detection
         ignorePlayer = false;
 
         Debug.Log("[EnemyAI] Mask pause over, now Walking again");
+
+
+        if (CanSeePlayer())
+        {
+            Debug.Log("[EnemyAI] Player spotted right after mask expired!");
+            ResetAllCoroutines();
+            chasing = true;
+            walking = false;
+            ai.isStopped = false;
+            chaseRoutine = StartCoroutine(ChaseRoutine());
+        }
     }
 
+    // --- Pick Random Destination ---
+    void PickNewDestination()
+    {
+        if (destinations == null || destinations.Count == 0) return;
+        currentDest = destinations[Random.Range(0, destinations.Count)];
+        if (ai != null && currentDest != null)
+            ai.destination = currentDest.position;
+    }
 
     void OnDrawGizmosSelected()
     {
@@ -327,5 +352,13 @@ public class EnemyAI : MonoBehaviour
         Vector3 dir = (player.position - start).normalized;
         Gizmos.DrawLine(start, start + dir * sightDistance);
         Gizmos.DrawWireSphere(start, 0.1f);
+
+        if (!player) return;
+
+        Gizmos.color = new Color(0f, 1f, 0f, 0.25f);
+        Vector3 leftBoundary = Quaternion.Euler(0, -fieldOfView * 0.5f, 0) * transform.forward;
+        Vector3 rightBoundary = Quaternion.Euler(0, fieldOfView * 0.5f, 0) * transform.forward;
+        Gizmos.DrawRay(transform.position, leftBoundary * sightDistance);
+        Gizmos.DrawRay(transform.position, rightBoundary * sightDistance);
     }
 }

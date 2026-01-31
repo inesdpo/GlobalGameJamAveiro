@@ -65,13 +65,10 @@ public class MaskController : MonoBehaviour
     // --- Notify all enemies that the player used the mask ---
     void NotifyEnemiesMaskUsed()
     {
-        EnemyAI[] enemies = Object.FindObjectsByType<EnemyAI>(FindObjectsSortMode.None);
-
-        foreach (EnemyAI enemy in enemies)
+        EnemyMaskReaction[] enemies = Object.FindObjectsByType<EnemyMaskReaction>(FindObjectsSortMode.None);
+        foreach (EnemyMaskReaction enemy in enemies)
         {
-            enemy.OnPlayerMasked(3f);
+            enemy.OnPlayerMasked(3f); // pause for 3 seconds
         }
     }
-
-
 }

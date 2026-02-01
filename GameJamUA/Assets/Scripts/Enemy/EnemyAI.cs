@@ -267,16 +267,21 @@ public class EnemyAI : MonoBehaviour
 
     bool CanSeePlayer()
     {
-        if (player == null || ignorePlayer) return false;
+        if (player == null) return false;
 
-        Vector3 dirToPlayer = (player.position - transform.position).normalized;
-        float angle = Vector3.Angle(transform.forward, dirToPlayer);
+        Vector3 dir = (player.position - transform.position).normalized;
+        float distance = Vector3.Distance(transform.position, player.position);
+
+        if (distance > sightDistance) return false;
+
+        float angle = Vector3.Angle(transform.forward, dir);
         if (angle > fieldOfView * 0.5f) return false;
-        float dist = Vector3.Distance(transform.position, player.position);
-        if (dist > sightDistance) return false;
 
-        if (Physics.Raycast(transform.position + raycastOffset, dirToPlayer, out RaycastHit hit, sightDistance))
+        if (Physics.Raycast(transform.position + raycastOffset, dir, out RaycastHit hit, sightDistance))
+        {
+            // Must hit the Player collider
             return hit.collider.CompareTag("Player");
+        }
 
         return false;
     }

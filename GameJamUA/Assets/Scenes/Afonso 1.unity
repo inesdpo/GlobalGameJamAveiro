@@ -1460,7 +1460,7 @@ MonoBehaviour:
   m_OverrideVoxelSize: 0
   m_VoxelSize: 0.16666667
   m_MinRegionArea: 2
-  m_NavMeshData: {fileID: 23800000, guid: baa465d261fc6f14fb684e10a50955d1, type: 2}
+  m_NavMeshData: {fileID: 23800000, guid: d94808cae33363945a48c79a5879025d, type: 2}
   m_BuildHeightMesh: 0
 --- !u!95 &2144901429 stripped
 Animator:
@@ -1496,14 +1496,6 @@ PrefabInstance:
       propertyPath: animator
       value: 
       objectReference: {fileID: 2144901429}
-    - target: {fileID: 6028285150956879933, guid: e70b9817ae6a6984186c362e72f84ac4, type: 3}
-      propertyPath: fieldOfView
-      value: 84
-      objectReference: {fileID: 0}
-    - target: {fileID: 6028285150956879933, guid: e70b9817ae6a6984186c362e72f84ac4, type: 3}
-      propertyPath: sightDistance
-      value: 13.6
-      objectReference: {fileID: 0}
     - target: {fileID: 6028285150956879933, guid: e70b9817ae6a6984186c362e72f84ac4, type: 3}
       propertyPath: 'destinations.Array.data[0]'
       value: 
@@ -1567,14 +1559,6 @@ PrefabInstance:
     - target: {fileID: 6974590428341455690, guid: e70b9817ae6a6984186c362e72f84ac4, type: 3}
       propertyPath: m_Name
       value: Enemy
-      objectReference: {fileID: 0}
-    - target: {fileID: 7479821921096259136, guid: e70b9817ae6a6984186c362e72f84ac4, type: 3}
-      propertyPath: m_Height
-      value: 2.8798647
-      objectReference: {fileID: 0}
-    - target: {fileID: 7479821921096259136, guid: e70b9817ae6a6984186c362e72f84ac4, type: 3}
-      propertyPath: m_Center.y
-      value: 0.93993235
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

@@ -1,5 +1,6 @@
 using System.Collections;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class PlayerHealth : MonoBehaviour
@@ -8,32 +9,32 @@ public class PlayerHealth : MonoBehaviour
     public float currentHealth;
     [SerializeField] private float maxHealth;
 
-    [SerializeField] private Image DeadImage = null;
+    [SerializeField] private Image DeadImage;
+    public bool alive = true;
 
-
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    private void Start()
     {
-        currentHealth = maxHealth;
         DeadImage.enabled = false;
     }
-
-
     public void TakeDamage(float damage)
     {
-        Debug.Log("TakeDamage called with: " + damage); 
+        Debug.Log("TakeDamage called with: " + damage);
         currentHealth -= damage;
 
         if (currentHealth <= 0)
         {
             currentHealth = 0;
             DeadImage.enabled = true;
+            alive = false;
             Debug.Log("Player is dead");
+            StartCoroutine(HandleDeath());
         }
     }
 
-    private void Update()
+    private IEnumerator HandleDeath()
     {
- 
+        yield return new WaitForSeconds(2f);
+        SceneManager.LoadScene("LostScene");
     }
+
 }

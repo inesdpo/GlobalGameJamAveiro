@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 public class MaskController : MonoBehaviour
 {
@@ -8,6 +9,8 @@ public class MaskController : MonoBehaviour
     public KeyCode toggleKey = KeyCode.E;
     public float maxMaskTime = 5f;
     public float cooldownTime = 5f;
+    public TMP_Text cooldownText;
+    public Image cooldownImage;
 
     private bool maskOn = false;
     private float maskTimer = 0f;
@@ -22,7 +25,22 @@ public class MaskController : MonoBehaviour
     void Update()
     {
         if (cooldownTimer > 0f)
+        {
             cooldownTimer -= Time.deltaTime;
+            cooldownTimer = Mathf.Max(cooldownTimer, 0f);
+
+            cooldownText.gameObject.SetActive(true);
+            cooldownImage.gameObject.SetActive(true);
+
+            cooldownText.text = Mathf.Ceil(cooldownTimer).ToString();
+
+        }
+        else
+        {
+            cooldownText.gameObject.SetActive(false);
+            cooldownImage.gameObject.SetActive(false);
+        }
+
 
         if (Input.GetKeyDown(toggleKey) && cooldownTimer <= 0f)
         {
@@ -44,6 +62,7 @@ public class MaskController : MonoBehaviour
         if (maskOn)
         {
             maskTimer -= Time.deltaTime;
+
 
             if (maskTimer <= 0f)
             {

@@ -71,7 +71,6 @@ public class MaskController : MonoBehaviour
         }
     }
 
-
     private void DisableMask()
     {
         maskOn = false;
@@ -79,6 +78,13 @@ public class MaskController : MonoBehaviour
             maskOverlay.enabled = false;
 
         cooldownTimer = cooldownTime;
+
+        // Reset blackout effect on all enemies
+        EnemyGazeEffect[] enemies = Object.FindObjectsByType<EnemyGazeEffect>(FindObjectsSortMode.None);
+        foreach (EnemyGazeEffect enemy in enemies)
+        {
+            enemy.ResetBlackout();
+        }
     }
 
     // --- Notify all enemies that the player used the mask ---
@@ -89,5 +95,10 @@ public class MaskController : MonoBehaviour
         {
             enemy.OnPlayerMasked(3f); // pause for 3 seconds
         }
+    }
+
+    public bool MaskActive()
+    {
+        return maskOn;
     }
 }

@@ -7,6 +7,7 @@ public class EnemySpawner : MonoBehaviour
     public Transform spawnPoint;
 
     private GameObject currentEnemy;
+    public AudioSource enemyAudio;
 
     public void SpawnEnemy()
     {
@@ -18,7 +19,9 @@ public class EnemySpawner : MonoBehaviour
                 return;
             }
 
+            enemyAudio.Play();
             currentEnemy = Instantiate(enemyPrefab, spawnPoint.position, spawnPoint.rotation);
+
             Debug.Log($"[EnemySpawner] Enemy spawned at {spawnPoint.position} (Object: {currentEnemy.name})");
         }
         else
@@ -31,9 +34,11 @@ public class EnemySpawner : MonoBehaviour
     {
         if (currentEnemy != null)
         {
+            enemyAudio.Stop();
             Debug.Log($"[EnemySpawner] Enemy despawned ({currentEnemy.name}).");
             Destroy(currentEnemy);
             currentEnemy = null;
+            enemyAudio = null;
         }
         else
         {
